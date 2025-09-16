@@ -133,6 +133,10 @@ public class ElectronicStoreApp extends Application{
 
             cartView.refresh();
             stockView.refresh();
+
+            if(products.size() == 1){
+                stockView.getSelectionModel().select(0);
+            }
         });
         
         /*---------Purchase button functinality---------*/
