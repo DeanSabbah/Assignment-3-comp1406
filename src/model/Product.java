@@ -1,3 +1,4 @@
+
 package model;
 
 public abstract class Product implements Comparable<Product>{
@@ -13,12 +14,23 @@ public abstract class Product implements Comparable<Product>{
         this.sold = sold;
     }
 
-    public int getSales(){return sold;}
+    public int getOnShelf(){
+        return onShelf;
+    }
+
+    public int getInCart(){
+        return inCart;
+    }
+
+    public int getSales(){
+        return sold;
+    }
 
     public double sellUnits(int amount){
         if (amount <= stock && amount > 0){
             stock -= amount;
             sold += amount;
+            inCart = 0;
             return price*amount;
         }
         else{
@@ -26,8 +38,8 @@ public abstract class Product implements Comparable<Product>{
         }
     }
 
-    public int compareTo(Product comparePro) {
-        return comparePro.getSales() - this.getSales();
+    public int compareTo(Product o) {
+        return o.getSales() - this.getSales();
     }
 
     public int getStock() {

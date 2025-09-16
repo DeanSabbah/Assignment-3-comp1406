@@ -1,7 +1,10 @@
 package ui;
 
+// import java.util.stream.Collectors;
+
 import javafx.application.Application;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.scene.control.ListCell;
@@ -13,36 +16,49 @@ import model.ElectronicStoreCreator;
 import model.Product;
 
 public class ElectronicStoreApp extends Application{
-    private final ElectronicStoreView storeUI = new ElectronicStoreView();
-    private ElectronicStore store = ElectronicStoreCreator.createStore();
-    private final ListView<Product> cartView = storeUI.cart.cart;
-    private final ListView<Product> stockView = storeUI.display.stock;
-    private final ListView<Product> popView = storeUI.popular.popular;
-    private ObservableList<Product> products = FXCollections.observableArrayList(store.products);
-    private ObservableList<Product> popProducts = FXCollections.observableArrayList(store.sortedProducts);
-    private static ObservableList<Product> cartList = FXCollections.observableArrayList(ElectronicStoreCreator.createStore().cartList);
+    private final ElectronicStoreView storeUI       = new ElectronicStoreView();
+    private ElectronicStore store                   = ElectronicStoreCreator.createStore();
+    private final ListView<Product> cartView        = storeUI.cart.cart;
+    private final ListView<Product> stockView       = storeUI.display.stock;
+    private final ListView<Product> popView         = storeUI.popular.popular;
+    private ObservableList<Product> allProducts     = FXCollections.observableArrayList(store.getProducts());
+    private FilteredList<Product> products          = new FilteredList<>(allProducts, product -> product.getOnShelf() > 0);
+    private FilteredList<Product> cartList          = new FilteredList<>(allProducts, product -> product.getInCart() > 0);
+    private ObservableList<Product> popularProducts = FXCollections.observableArrayList(store.getPopularProducts());
+    
     private int saleNum;
     private double cartTotal;
     private double total;
 
     private void initialization(){
-        saleNum = 0;
-        cartTotal = 0;
-        total = 0;
-        store = ElectronicStoreCreator.createStore();
-        cartList.clear();
-        products = FXCollections.observableArrayList(store.products);
-        popProducts = FXCollections.observableArrayList(store.sortedProducts);
+        saleNum         = 0;
+        cartTotal       = 0;
+        total           = 0;
+        store           = ElectronicStoreCreator.createStore();
+
+        allProducts     = FXCollections.observableArrayList(store.getProducts());
+        popularProducts = FXCollections.observableArrayList(store.getPopularProducts());
+        
+        products        = new FilteredList<>(allProducts, product -> product.getOnShelf() > 0);
+        cartList        = new FilteredList<>(allProducts, product -> product.getInCart() > 0);
+
+        for(Product p : allProducts){
+            touchProduct(p);
+        }
+
         storeUI.summary.sales.setText(Integer.toString(saleNum));
         storeUI.summary.revenue.setText(String.format("%.2f",total));
         storeUI.summary.persale.setText(String.format("%.2f",total/saleNum*1.0));
         storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal));
+
         stockView.setItems(products);
-        popView.setItems(popProducts);
         cartView.setItems(cartList);
+        popView.setItems(popularProducts);
+
         storeUI.display.addCart.setOn(false);
         storeUI.cart.purchase.setOn(false);
         storeUI.cart.remove.setOn(false);
+        
         cartView.setCellFactory(new Callback<ListView<Product>,ListCell<Product>>() {
             @Override
             public ListCell<Product> call(ListView<Product> arg0) {
@@ -57,15 +73,23 @@ public class ElectronicStoreApp extends Application{
         });
     }
 
+    // Re-set same reference to fire an UPDATE change
+    private void touchProduct(Product p) {
+        int i = allProducts.indexOf(p);
+        if (i >= 0) {
+            allProducts.set(i, p);
+        }
+    }
+
     public void start(Stage primaryStage) {
         /*---------Reset button functionality--------*/
-        storeUI.popular.reset.setOnAction(actionEvent -> initialization());
+        storeUI.popular.reset.setOnAction((_) -> initialization());
 
-        /*If item in display is selected, add to cart becomes button becomes usable*/
-        stockView.getSelectionModel().selectedItemProperty().addListener(observable -> storeUI.display.addCart.setOn(true));
+        /*If item in display is selected, enable add to cart button*/
+        stockView.getSelectionModel().selectedItemProperty().addListener((_) -> storeUI.display.addCart.setOn(true));
 
-        /*If item in cart is selected, remove from cart becomes button becomes usable*/
-        cartView.getSelectionModel().selectedItemProperty().addListener(observable -> {
+        /*If item in cart is selected, enable remove from cart button*/
+        cartView.getSelectionModel().selectedItemProperty().addListener((_) -> {
             storeUI.cart.remove.setOn(true);
             if (cartList.isEmpty()){
                 storeUI.cart.purchase.setOn(false);
@@ -73,69 +97,63 @@ public class ElectronicStoreApp extends Application{
             }
         });
 
-        /*If display is empty, make add to cart button unusable*/
-        stockView.getSelectionModel().selectedItemProperty().addListener(observable -> {
+        /*If display is empty, disables add to cart button*/
+        stockView.getSelectionModel().selectedItemProperty().addListener((_) -> {
             if (products.isEmpty()){
                 storeUI.display.addCart.setOn(false);
             }
         });
         
         /*--------Remove button functionality--------*/
-        storeUI.cart.remove.setOnAction(actionEvent -> {
+        storeUI.cart.remove.setOnAction((_) -> {
             Product selectedProd = cartView.getSelectionModel().getSelectedItem();
+            store.removeFromCart(selectedProd);
+
+            touchProduct(selectedProd);
+
             storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal -= selectedProd.price));
-            if (products.contains(selectedProd)){
-                products.get(products.indexOf(selectedProd)).onShelf++;
-            }
-            else{
-                selectedProd.onShelf = 1;
-                products.add(selectedProd);
-            }
-            selectedProd.inCart --;
-            if (selectedProd.inCart <= 0){
-                cartList.remove(selectedProd);
-            }
+
             cartView.refresh();
             stockView.refresh();
+
+            if(cartList.size() == 1){
+                cartView.getSelectionModel().select(0);
+            }
         });
 
         /*--------Add to cart button functionality-------*/
-        storeUI.display.addCart.setOnAction(actionEvent -> {
-            Product selectedProd = stockView.getSelectionModel().getSelectedItem();
+        storeUI.display.addCart.setOnAction((_) -> {
             storeUI.cart.purchase.setOn(true);
-            if(cartList.contains(selectedProd)){
-                cartList.get(cartList.indexOf(selectedProd)).inCart ++;
-            }
-            else{
-                selectedProd.inCart = 1;
-                cartList.add(selectedProd);
-            }
-            selectedProd.onShelf --;
-            cartTotal += products.get(stockView.getSelectionModel().getSelectedIndex()).price;
-            storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal));
-            if (selectedProd.onShelf <= 0){
-                products.remove(selectedProd);
-           }
-            if(stockView.getSelectionModel().getSelectedIndex() == -1){
-                storeUI.display.addCart.setOn(false);
-            }
+            Product selectedProd = stockView.getSelectionModel().getSelectedItem();
+            
+            store.addToCart(selectedProd);
+            storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal += selectedProd.price));
+
+            touchProduct(selectedProd);
+
             cartView.refresh();
             stockView.refresh();
         });
         
-        /*---------Purchese button functinality---------*/
-        storeUI.cart.purchase.setOnAction(actionEvent -> {
-            store.cartList = cartList;
-            for (int i = 0; i < cartList.size(); i++) {
-                store.sellProducts(i, cartList.get(i).inCart);
+        /*---------Purchase button functinality---------*/
+        storeUI.cart.purchase.setOnAction((_) -> {
+            for(Product p : cartList){
+                store.sellProduct(p);
             }
-            popView.setItems(popProducts = FXCollections.observableArrayList(store.getPop()));
+            int lastSize = cartList.size();
+            for(int i = 0; i < cartList.size(); i++){
+                touchProduct(cartList.get(i));
+                if(cartList.size() < lastSize) i--;
+            }
+
+            popularProducts.setAll(store.getPopularProducts());
+            popView.refresh();
+
             storeUI.cart.purchase.setOn(false);
-            storeUI.summary.sales.setText(Integer.toString(saleNum += 1));
-            storeUI.summary.revenue.setText(String.format("%.2f",total += cartTotal));
-            storeUI.summary.persale.setText(String.format("%.2f",total/saleNum*1.0));
+            storeUI.summary.sales.setText(Integer.toString(++saleNum));
+            storeUI.summary.revenue.setText(String.format("%.2f",store.getRevenue()));
+            storeUI.summary.persale.setText(String.format("%.2f",store.getRevenue()/saleNum*1.0));
             storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal = 0));
-            cartList.clear();
         });
 
     initialization();

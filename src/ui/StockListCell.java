@@ -11,7 +11,7 @@ public class StockListCell extends ListCell<Product> {
             setText("");
         }
         else{
-            setText(item.onShelf + "x " + item.toString());
+            setText(item.getOnShelf() + "x " + item.toString());
         }
     }
 }

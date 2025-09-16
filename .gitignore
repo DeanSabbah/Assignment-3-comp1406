@@ -1,0 +1,9 @@
+# VSCode
+/.vscode
+# Intellij
+/.idea
+# Build
+/bin
+# Misc
+*.bat
+*.jar

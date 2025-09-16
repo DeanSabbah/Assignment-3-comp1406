@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
 public class ElectronicStore {
     String name;
     private final int MAX_PRODUCTS = 10;
     double revenue = 0;
-    public List<Product> products = new ArrayList<>(MAX_PRODUCTS);
-    public List<Product> sortMe = new ArrayList<>(MAX_PRODUCTS);    
-    public List<Product> sortedProducts = new ArrayList<>(3);
-    public List<Product> cartList = new ArrayList<>(MAX_PRODUCTS);
+    private List<Product> products = new ArrayList<>(MAX_PRODUCTS);
+    private List<Product> soldProducts = new ArrayList<>(MAX_PRODUCTS);    
+    private List<Product> popularProducts = new ArrayList<>(3);
     int sales = 0;
     
 
     public ElectronicStore(String name) {
-    this.name = name;
+        this.name = name;
     }
 
     public String getName(){
@@ -26,43 +26,51 @@ public class ElectronicStore {
     void addProduct(Product p){
         if (products.size() < MAX_PRODUCTS){
             products.add(p);
-            sortMe.add(p);
+            soldProducts.add(p);
             for (Product product : products) {
                 product.onShelf = product.stock;
             }
-            if(sortedProducts.size() < 3){
-                sortedProducts.add(p);
+            if(popularProducts.size() < 3){
+                popularProducts.add(p);
             }
         }
     }
 
-    public void sellProducts(int item, int amount){
-        Product cartItem = cartList.get(item);
-        double transaction = cartItem.sellUnits(amount);
-        if(transaction == -1.0){}
-        else{
-            revenue += transaction;
-            sales += cartItem.sold;
-            if(products.contains(cartItem)){
-                Product productItem = products.get(products.indexOf(cartList.get(item)));
-                productItem.sold = cartItem.sold;
-                productItem.onShelf = cartItem.onShelf;
-            }
-            sortMe = products;
+    public void addToCart(Product p){
+        if(p.getOnShelf() > 0){
+            p.inCart++;
+            p.onShelf--;
         }
+    }
+
+    public void removeFromCart(Product p){
+        if(p.getInCart() > 0){
+            p.inCart--;
+            p.onShelf++;
+        }
+    }
+
+    public void sellProduct(Product p){
+        double transaction =  p.sellUnits(p.getInCart());
+        if(transaction == -1) return;
+        sales += p.getInCart();
+        revenue += transaction;
+        //if(p.getOnShelf() == 0) products.remove(p);
     }
 
     public double getRevenue() {
         return revenue;
     }
 
-    public List<Product> getPop(){
-        Collections.sort(sortMe);
-        for(int i = 0; i < sortMe.size();i++){
-            if (i<3){
-                sortedProducts.set(i, sortMe.get(i));
-            }
+    public List<Product> getProducts(){
+        return products;
+    }
+
+    public List<Product> getPopularProducts(){
+        Collections.sort(soldProducts);
+        for(int i = 0; i < 3;i++){
+            popularProducts.set(i, soldProducts.get(i));
         }
-        return sortedProducts;
+        return popularProducts;
     }
 }

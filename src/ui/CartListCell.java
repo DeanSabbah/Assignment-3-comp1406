@@ -11,7 +11,7 @@ public class CartListCell extends ListCell<Product> {
             setText("");
         }
         else{
-            setText(item.inCart + "x " + item.toString());
+            setText(item.getInCart() + "x " + item.toString());
         }
     }
 }
