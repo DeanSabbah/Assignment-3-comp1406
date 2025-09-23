@@ -15,34 +15,35 @@ import model.ElectronicStoreCreator;
 import model.Product;
 
 public class ElectronicStoreApp extends Application{
-    private final ElectronicStoreView storeUI         = new ElectronicStoreView();
-    private ElectronicStore           store           = ElectronicStoreCreator.createStore();
-    private final ListView<Product>   cartView        = storeUI.cart.cart;
-    private final ListView<Product>   stockView       = storeUI.display.stock;
-    private final ListView<Product>   popView         = storeUI.popular.popular;
-    private ObservableList<Product>   allProducts     = FXCollections.observableArrayList(product -> new Observable[] {product.anyInCart(), product.anyOnShelf()});
-    private FilteredList<Product>     products        = new FilteredList<>(allProducts, product -> product.anyOnShelf().get());
-    private FilteredList<Product>     cartList        = new FilteredList<>(allProducts, product -> product.anyInCart().get());
-    private ObservableList<Product>   popularProducts = FXCollections.observableArrayList(store.getPopularProducts());
+    private final ElectronicStoreView storeUI   = new ElectronicStoreView();
+    private final ListView<Product>   cartView  = storeUI.cart.cart;
+    private final ListView<Product>   stockView = storeUI.display.stock;
+    private final ListView<Product>   popView   = storeUI.popular.popular;
+
+    private ElectronicStore           store;
+    private ObservableList<Product>   allProducts;
+    private FilteredList<Product>     products;
+    private FilteredList<Product>     cartList;
+    private ObservableList<Product>   popularProducts;
     
     private int saleNum;
     private double cartTotal;
 
     private void initialization(){
-        cartTotal       = 0;
         store           = ElectronicStoreCreator.createStore();
+        cartTotal       = 0;
 
         allProducts     = FXCollections.observableArrayList(product -> new Observable[] {product.anyInCart(), product.anyOnShelf()});
-        allProducts.addAll(store.getProducts());
         popularProducts = FXCollections.observableArrayList(store.getPopularProducts());
-        popView.disableProperty();
         
+        allProducts.addAll(store.getProducts());
+
         products        = new FilteredList<>(allProducts, product -> product.anyOnShelf().get());
         cartList        = new FilteredList<>(allProducts, product -> product.anyInCart().get());
 
         storeUI.summary.sales.setText(Integer.toString(store.getSales()));
         storeUI.summary.revenue.setText(String.format("%.2f", store.getRevenue()));
-        storeUI.summary.persale.setText(String.format("%.2f",store.getRevenue()/saleNum*1.0));
+        storeUI.summary.persale.setText(String.format("%.2f",store.getRevenue()/saleNum));
         storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal));
 
         stockView.setItems(products);
@@ -125,12 +126,14 @@ public class ElectronicStoreApp extends Application{
             storeUI.cart.purchase.setOn(false);
             storeUI.summary.sales.setText(Integer.toString(store.getSales()));
             storeUI.summary.revenue.setText(String.format("%.2f", store.getRevenue()));
-            storeUI.summary.persale.setText(String.format("%.2f", store.getRevenue()/store.getSales()*1.0));
+            storeUI.summary.persale.setText(String.format("%.2f", store.getRevenue()/store.getSales()));
             storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal = 0));
         });
 
     initialization();
+
     Scene scene = new Scene(storeUI.getScene(), 800, 400);
+    
     primaryStage.setResizable(false);
     primaryStage.setTitle(store.getName());
     primaryStage.setScene(scene);

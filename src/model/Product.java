@@ -24,7 +24,7 @@ public abstract class Product implements Comparable<Product>{
         return onShelf;
     }
 
-    public void addToCart(){
+    public void addToCart() throws IndexOutOfBoundsException{
         if(onShelf > 0){
             inCart++;
             onShelf--;
@@ -32,7 +32,7 @@ public abstract class Product implements Comparable<Product>{
         else throw new IndexOutOfBoundsException("No items in stock");
     }
 
-    public void removeFromCart(){
+    public void removeFromCart() throws IndexOutOfBoundsException{
         if(inCart > 0){
             inCart--;
             onShelf++;
