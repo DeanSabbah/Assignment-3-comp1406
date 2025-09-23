@@ -1,8 +1,8 @@
 package ui;
 
 // import java.util.stream.Collectors;
-
 import javafx.application.Application;
+import javafx.beans.Observable;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.FXCollections;
@@ -16,15 +16,15 @@ import model.ElectronicStoreCreator;
 import model.Product;
 
 public class ElectronicStoreApp extends Application{
-    private final ElectronicStoreView storeUI       = new ElectronicStoreView();
-    private ElectronicStore store                   = ElectronicStoreCreator.createStore();
-    private final ListView<Product> cartView        = storeUI.cart.cart;
-    private final ListView<Product> stockView       = storeUI.display.stock;
-    private final ListView<Product> popView         = storeUI.popular.popular;
-    private ObservableList<Product> allProducts     = FXCollections.observableArrayList(store.getProducts());
-    private FilteredList<Product> products          = new FilteredList<>(allProducts, product -> product.getOnShelf() > 0);
-    private FilteredList<Product> cartList          = new FilteredList<>(allProducts, product -> product.getInCart() > 0);
-    private ObservableList<Product> popularProducts = FXCollections.observableArrayList(store.getPopularProducts());
+    private final ElectronicStoreView storeUI         = new ElectronicStoreView();
+    private ElectronicStore           store           = ElectronicStoreCreator.createStore();
+    private final ListView<Product>   cartView        = storeUI.cart.cart;
+    private final ListView<Product>   stockView       = storeUI.display.stock;
+    private final ListView<Product>   popView         = storeUI.popular.popular;
+    private ObservableList<Product>   allProducts     = FXCollections.observableArrayList(product -> new Observable[] {product.anyInCart(), product.anyOnShelf()});
+    private FilteredList<Product>     products        = new FilteredList<>(allProducts, product -> product.anyOnShelf().get());
+    private FilteredList<Product>     cartList        = new FilteredList<>(allProducts, product -> product.anyInCart().get());
+    private ObservableList<Product>   popularProducts = FXCollections.observableArrayList(store.getPopularProducts());
     
     private int saleNum;
     private double cartTotal;
@@ -36,15 +36,12 @@ public class ElectronicStoreApp extends Application{
         total           = 0;
         store           = ElectronicStoreCreator.createStore();
 
-        allProducts     = FXCollections.observableArrayList(store.getProducts());
+        allProducts     = FXCollections.observableArrayList(product -> new Observable[] {product.anyInCart(), product.anyOnShelf()});
+        allProducts.addAll(store.getProducts());
         popularProducts = FXCollections.observableArrayList(store.getPopularProducts());
         
-        products        = new FilteredList<>(allProducts, product -> product.getOnShelf() > 0);
-        cartList        = new FilteredList<>(allProducts, product -> product.getInCart() > 0);
-
-        for(Product p : allProducts){
-            touchProduct(p);
-        }
+        products        = new FilteredList<>(allProducts, product -> product.anyOnShelf().get());
+        cartList        = new FilteredList<>(allProducts, product -> product.anyInCart().get());
 
         storeUI.summary.sales.setText(Integer.toString(saleNum));
         storeUI.summary.revenue.setText(String.format("%.2f",total));
@@ -71,14 +68,6 @@ public class ElectronicStoreApp extends Application{
                 return new StockListCell();
             }
         });
-    }
-
-    // Re-set same reference to fire an UPDATE change
-    private void touchProduct(Product p) {
-        int i = allProducts.indexOf(p);
-        if (i >= 0) {
-            allProducts.set(i, p);
-        }
     }
 
     public void start(Stage primaryStage) {
@@ -109,16 +98,10 @@ public class ElectronicStoreApp extends Application{
             Product selectedProd = cartView.getSelectionModel().getSelectedItem();
             store.removeFromCart(selectedProd);
 
-            touchProduct(selectedProd);
-
             storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal -= selectedProd.price));
 
             cartView.refresh();
             stockView.refresh();
-
-            if(cartList.size() == 1){
-                cartView.getSelectionModel().select(0);
-            }
         });
 
         /*--------Add to cart button functionality-------*/
@@ -129,25 +112,14 @@ public class ElectronicStoreApp extends Application{
             store.addToCart(selectedProd);
             storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal += selectedProd.price));
 
-            touchProduct(selectedProd);
-
             cartView.refresh();
             stockView.refresh();
-
-            if(products.size() == 1){
-                stockView.getSelectionModel().select(0);
-            }
         });
         
         /*---------Purchase button functinality---------*/
         storeUI.cart.purchase.setOnAction((_) -> {
             for(Product p : cartList){
                 store.sellProduct(p);
-            }
-            int lastSize = cartList.size();
-            for(int i = 0; i < cartList.size(); i++){
-                touchProduct(cartList.get(i));
-                if(cartList.size() < lastSize) i--;
             }
 
             popularProducts.setAll(store.getPopularProducts());
