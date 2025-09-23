@@ -37,32 +37,24 @@ public class ElectronicStore {
         }
     }
 
-    public void addToCart(Product p) throws IndexOutOfBoundsException{
-        if(p.getOnShelf() > 0){
-            p.addToCart();
-            p.updateAnys();
-        }
-        else{
-            throw new IndexOutOfBoundsException("No items left on shelf");
-        }
-    }
-
-    public void removeFromCart(Product p) throws IndexOutOfBoundsException{
-        if(p.getInCart() > 0){
-            p.removeFromCart();
-            p.updateAnys();
-        }
-        else{
-            throw new IndexOutOfBoundsException("No items left in cart");
-        }
-    }
-
-    public void sellProduct(Product p){
-        double transaction =  p.sellUnits(p.getInCart());
-        if(transaction == -1) return;
-        revenue += transaction;
-        sales++;
+    public void addToCart(Product p){
+        p.addToCart();
         p.updateAnys();
+    }
+
+    public void removeFromCart(Product p){
+        p.removeFromCart();
+        p.updateAnys();        
+    }
+
+    public void sellProduct(Product[] products){
+        for(Product p : products){
+            double transaction =  p.sellUnits(p.getInCart());
+            if(transaction == -1) return;
+            revenue += transaction;
+            p.updateAnys();
+        }
+        sales++;
     }
 
     public double getRevenue() {

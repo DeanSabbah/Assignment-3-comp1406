@@ -14,7 +14,7 @@ import model.ElectronicStore;
 import model.ElectronicStoreCreator;
 import model.Product;
 
-public class ElectronicStoreApp extends Application{
+public class ElectronicStoreApp extends Application {
     private final ElectronicStoreView storeUI   = new ElectronicStoreView();
     private final ListView<Product>   cartView  = storeUI.cart.cart;
     private final ListView<Product>   stockView = storeUI.display.stock;
@@ -25,7 +25,7 @@ public class ElectronicStoreApp extends Application{
     private FilteredList<Product>     products;
     private FilteredList<Product>     cartList;
     private ObservableList<Product>   popularProducts;
-    
+
     private int saleNum;
     private double cartTotal;
 
@@ -60,6 +60,7 @@ public class ElectronicStoreApp extends Application{
                 return new CartListCell();
             }
         });
+        
         stockView.setCellFactory(new Callback<ListView<Product>,ListCell<Product>>() {
             @Override
             public ListCell<Product> call(ListView<Product> arg0) {
@@ -116,9 +117,7 @@ public class ElectronicStoreApp extends Application{
         
         /*---------Purchase button functinality---------*/
         storeUI.cart.purchase.setOnAction((_) -> {
-            while(cartList.size() > 0){
-                store.sellProduct(cartList.getFirst());
-            }
+            store.sellProduct(cartList.toArray(new Product[cartList.size()]));
 
             popularProducts.setAll(store.getPopularProducts());
             popView.refresh();
