@@ -1,8 +1,8 @@
 package model;
 
 public class Fridge extends Appliances {
-    double  size;
-    boolean freezer;
+    private double  size;
+    private boolean freezer;
 
     public Fridge(Double price, int stock, int wattage, String colour, String brand, double size, boolean freezer){
         super(price, stock, wattage, colour, brand);

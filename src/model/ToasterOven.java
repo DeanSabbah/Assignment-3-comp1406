@@ -1,8 +1,8 @@
 package model;
 
 public class ToasterOven extends Appliances {
-    int     width;
-    boolean convection;
+    private int     width;
+    private boolean convection;
 
     public ToasterOven(double price, int stock, int wattage, String colour, String brand, int width, boolean convection){
         super(price, stock, wattage, colour, brand);

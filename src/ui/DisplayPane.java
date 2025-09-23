@@ -7,9 +7,9 @@ import model.Product;
 
 public class DisplayPane extends Pane {
     /*------Initialization or whatever------*/
-    ListView<Product> stock = new ListView<Product>();
-    Label l_stock = new Label("Store stock");
-    ToggleButton addCart = new ToggleButton("Add to Cart");
+    private Label l_stock               = new Label("Store stock");
+    protected ListView<Product> stock   = new ListView<Product>();
+    protected ToggleButton addCart      = new ToggleButton("Add to Cart");
 
         public DisplayPane(){
         l_stock.setStyle("-fx-font: 16 ariel");

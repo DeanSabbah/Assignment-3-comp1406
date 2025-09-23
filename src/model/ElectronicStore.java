@@ -7,12 +7,13 @@ import java.util.List;
 
 public class ElectronicStore {
     String name;
-    private final int MAX_PRODUCTS = 10;
-    double revenue = 0;
-    private List<Product> products = new ArrayList<>(MAX_PRODUCTS);
-    private List<Product> soldProducts = new ArrayList<>(MAX_PRODUCTS);    
+    private final int MAX_PRODUCTS        = 10;
+    private List<Product> products        = new ArrayList<>(MAX_PRODUCTS);
+    private List<Product> soldProducts    = new ArrayList<>(MAX_PRODUCTS);    
     private List<Product> popularProducts = new ArrayList<>(3);
-    int sales = 0;
+    
+    private int sales      = 0;
+    private double revenue = 0;
     
 
     public ElectronicStore(String name) {
@@ -28,7 +29,7 @@ public class ElectronicStore {
             products.add(p);
             soldProducts.add(p);
             for (Product product : products) {
-                product.onShelf = product.stock;
+                product.setOnShelf(product.getStock());
             }
             if(popularProducts.size() < 3){
                 popularProducts.add(p);
@@ -38,8 +39,7 @@ public class ElectronicStore {
 
     public void addToCart(Product p) throws IndexOutOfBoundsException{
         if(p.getOnShelf() > 0){
-            p.inCart++;
-            p.onShelf--;
+            p.addToCart();
             p.updateAnys();
         }
         else{
@@ -49,8 +49,7 @@ public class ElectronicStore {
 
     public void removeFromCart(Product p) throws IndexOutOfBoundsException{
         if(p.getInCart() > 0){
-            p.inCart--;
-            p.onShelf++;
+            p.removeFromCart();
             p.updateAnys();
         }
         else{
@@ -61,8 +60,9 @@ public class ElectronicStore {
     public void sellProduct(Product p){
         double transaction =  p.sellUnits(p.getInCart());
         if(transaction == -1) return;
-        sales += p.getInCart();
         revenue += transaction;
+        sales++;
+        p.updateAnys();
     }
 
     public double getRevenue() {
@@ -71,6 +71,10 @@ public class ElectronicStore {
 
     public List<Product> getProducts(){
         return products;
+    }
+
+    public int getSales() {
+        return sales;
     }
 
     public List<Product> getPopularProducts(){

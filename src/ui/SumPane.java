@@ -5,13 +5,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
 public class SumPane extends Pane {
-    Label summary = new Label("Store Summary");
-    Label l_sales = new Label("Sales:");
-    Label l_revenue = new Label("Revenue:");
-    Label l_persale = new Label("$/Sale:");
-    TextField sales = new TextField();
-    TextField revenue = new TextField();
-    TextField persale = new TextField();
+    private Label summary       = new Label("Store Summary");
+    private Label l_sales       = new Label("Sales:");
+    private Label l_revenue     = new Label("Revenue:");
+    private Label l_persale     = new Label("$/Sale:");
+    protected TextField sales   = new TextField();
+    protected TextField revenue = new TextField();
+    protected TextField persale = new TextField();
 
     public SumPane(){
         summary.relocate(0, 5);

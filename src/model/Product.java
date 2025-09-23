@@ -4,11 +4,11 @@ package model;
 import javafx.beans.property.SimpleBooleanProperty;
 
 public abstract class Product implements Comparable<Product>{
-    public double price;
-    public int stock;
-    public int onShelf;
-    public int inCart;
-    public int sold;
+    protected double price;
+    protected int stock;
+    protected int onShelf;
+    protected int inCart;
+    protected int sold;
     private SimpleBooleanProperty anyInCart;
     private SimpleBooleanProperty anyOnShelf;
 
@@ -24,12 +24,57 @@ public abstract class Product implements Comparable<Product>{
         return onShelf;
     }
 
+    public void addToCart(){
+        if(onShelf > 0){
+            inCart++;
+            onShelf--;
+        }
+        else throw new IndexOutOfBoundsException("No items in stock");
+    }
+
+    public void removeFromCart(){
+        if(inCart > 0){
+            inCart--;
+            onShelf++;
+        }
+        else throw new IndexOutOfBoundsException("No items in the cart");
+    }
+
+    public void setOnShelf(int onShelf){
+        this.onShelf = onShelf;
+    }
+
     public int getInCart(){
         return inCart;
     }
 
-    public int getSales(){
+    public void setInCart(int inCart){
+        this.inCart = inCart;
+    }
+    
+    public int amountSold(){
         return sold;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public double getPrice(){
+        return price;
+    }
+
+    public void updateAnys(){
+        anyInCart.set(inCart > 0);
+        anyOnShelf.set(onShelf > 0);
+    }
+
+    public SimpleBooleanProperty anyInCart(){
+        return anyInCart;
+    }
+
+    public SimpleBooleanProperty anyOnShelf(){
+        return anyOnShelf;
     }
 
     public double sellUnits(int amount){
@@ -45,24 +90,6 @@ public abstract class Product implements Comparable<Product>{
     }
 
     public int compareTo(Product o) {
-        return o.getSales() - this.getSales();
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void updateAnys(){
-        anyInCart.set(inCart > 0);
-        anyOnShelf.set(onShelf > 0);
-    }
-
-    public SimpleBooleanProperty anyInCart(){
-        return anyInCart;
-    }
-
-    public SimpleBooleanProperty anyOnShelf(){
-        anyOnShelf.set(onShelf > 0);
-        return anyOnShelf;
+        return o.amountSold() - this.amountSold();
     }
 }

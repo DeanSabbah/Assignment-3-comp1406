@@ -3,11 +3,11 @@ package ui;
 import javafx.scene.layout.Pane;
 
 public class ElectronicStoreView {
-    Pane mainPane = new Pane();
-    SumPane summary = new SumPane();
-    DisplayPane display = new DisplayPane();
-    CartPane cart = new CartPane();
-    PopPane popular = new PopPane();
+    protected Pane mainPane       = new Pane();
+    protected SumPane summary     = new SumPane();
+    protected DisplayPane display = new DisplayPane();
+    protected CartPane cart       = new CartPane();
+    protected PopPane popular     = new PopPane();
 
     public Pane getScene(){
         summary.relocate(14, 25);

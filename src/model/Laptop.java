@@ -1,7 +1,7 @@
 package model;
 
 public class Laptop extends Computers {
-    double  screen;
+    private double  screen;
 
     public Laptop(double price, int stock, double cpu, int ram, boolean drive, int storage, double screen){
         super(price, stock, cpu, ram, drive, storage);

@@ -2,7 +2,7 @@ package model;
 
 public class Desktop extends Computers {
 
-    String  form;
+    private String  form;
 
     public Desktop(double price, int stock, double cpu, int ram, boolean drive, int storage, String form){
         super(price, stock, cpu, ram, drive, storage);

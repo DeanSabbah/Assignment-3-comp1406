@@ -7,11 +7,12 @@ import model.Product;
 
 public class CartPane extends Pane {
     /*------Initialization or whatever------*/
-    Label lCart = new Label("Cart");
-    ListView<Product> cart = new ListView<Product>();
-    ToggleButton remove = new ToggleButton("Remove from\ncart");
-    ToggleButton purchase = new ToggleButton("Complete\npurchase");
-    Label cartTotal = new Label();
+    private Label lCart              = new Label("Cart");
+    protected Label cartTotal        = new Label();
+    protected ListView<Product> cart = new ListView<Product>();
+    protected ToggleButton remove    = new ToggleButton("Remove from\ncart");
+    protected ToggleButton purchase  = new ToggleButton("Complete\npurchase");
+
     public CartPane(){
 
         /*------------Cart label-----------*/

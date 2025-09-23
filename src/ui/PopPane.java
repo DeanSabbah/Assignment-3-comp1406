@@ -8,9 +8,9 @@ import model.Product;
 
 public class PopPane extends Pane {
     /*------Initialization or whatever------*/
-    ListView<Product> popular = new ListView<Product>();
-    Label l_popular = new Label("Most Popular Items:");
-    Button reset = new Button("Reset");
+    private Label l_popular             = new Label("Most Popular Items:");
+    protected ListView<Product> popular = new ListView<Product>();
+    protected Button reset              = new Button("Reset");
 
     public PopPane(){
         /*-----------reset button----------*/

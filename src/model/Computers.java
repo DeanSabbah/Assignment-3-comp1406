@@ -1,10 +1,10 @@
 package model;
 
 public abstract class Computers extends Product {
-    double cpu;
-    int ram;
-    boolean drive;
-    int storage;
+    protected double    cpu;
+    protected int       ram;
+    protected boolean   drive;
+    protected int       storage;
 
     public Computers(double price, int stock, double cpu, int ram, boolean drive, int storage){
         super(price, stock, 0);
