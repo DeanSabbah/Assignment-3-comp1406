@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -64,13 +63,5 @@ public class ElectronicStore {
 
     public int getSales() {
         return sales;
-    }
-
-    public List<Product> getPopularProducts(){
-        Collections.sort(soldProducts);
-        for(int i = 0; i < 3;i++){
-            popularProducts.set(i, soldProducts.get(i));
-        }
-        return popularProducts;
     }
 }
