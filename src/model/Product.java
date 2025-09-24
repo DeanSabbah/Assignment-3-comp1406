@@ -1,58 +1,70 @@
 
 package model;
 
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
-public abstract class Product implements Comparable<Product>{
+public abstract class Product implements Comparable<Product> {
     protected double price;
-    protected int stock;
-    protected int onShelf;
-    protected int inCart;
-    protected int sold;
-    private SimpleBooleanProperty anyInCart;
-    private SimpleBooleanProperty anyOnShelf;
+    protected int    stock;
+
+    private SimpleIntegerProperty onShelf;
+    private SimpleIntegerProperty inCart;
+    private SimpleIntegerProperty sold;
 
     public Product(double price, int stock, int sold){
-        this.price = price;
-        this.stock = stock;
-        this.sold = sold;
-        this.anyInCart = new SimpleBooleanProperty(false);
-        this.anyOnShelf = new SimpleBooleanProperty(true);
-    }
+        this.price      = price;
+        this.stock      = stock;
 
-    public int getOnShelf(){
-        return onShelf;
+        this.inCart     = new SimpleIntegerProperty(0);
+        this.onShelf    = new SimpleIntegerProperty(stock);
+        this.sold       = new SimpleIntegerProperty(0);
     }
 
     public void addToCart() throws IndexOutOfBoundsException{
-        if(onShelf > 0){
-            inCart++;
-            onShelf--;
+        if(onShelf.get() > 0){
+            inCart.set(inCart.get() + 1);
+            onShelf.set(onShelf.get() - 1);
         }
         else throw new IndexOutOfBoundsException("No items in stock");
     }
 
     public void removeFromCart() throws IndexOutOfBoundsException{
-        if(inCart > 0){
-            inCart--;
-            onShelf++;
+        if(inCart.get() > 0){
+            inCart.set(inCart.get() - 1);
+            onShelf.set(onShelf.get() + 1);
         }
         else throw new IndexOutOfBoundsException("No items in the cart");
     }
 
+    public int getOnShelf(){
+        return onShelf.get();
+    }
+
+    public SimpleIntegerProperty getOnShelfObservable(){
+        return onShelf;
+    }
+
     public void setOnShelf(int onShelf){
-        this.onShelf = onShelf;
+        this.onShelf.set(onShelf);;
     }
 
     public int getInCart(){
+        return inCart.get();
+    }
+
+    public SimpleIntegerProperty getInCartObservable(){
         return inCart;
     }
 
     public void setInCart(int inCart){
-        this.inCart = inCart;
+        this.inCart.set(inCart);;
     }
     
-    public int amountSold(){
+    public int getSold(){
+        return sold.get();
+    }
+
+    public SimpleIntegerProperty getSoldObservable(){
         return sold;
     }
 
@@ -64,24 +76,11 @@ public abstract class Product implements Comparable<Product>{
         return price;
     }
 
-    public void updateAnys(){
-        anyInCart.set(inCart > 0);
-        anyOnShelf.set(onShelf > 0);
-    }
-
-    public SimpleBooleanProperty anyInCart(){
-        return anyInCart;
-    }
-
-    public SimpleBooleanProperty anyOnShelf(){
-        return anyOnShelf;
-    }
-
     public double sellUnits(int amount){
         if (amount <= stock && amount > 0){
             stock -= amount;
-            sold += amount;
-            inCart = 0;
+            sold.set(sold.get() + amount);
+            inCart.set(0);
             return price*amount;
         }
         else{
@@ -90,6 +89,6 @@ public abstract class Product implements Comparable<Product>{
     }
 
     public int compareTo(Product o) {
-        return o.amountSold() - this.amountSold();
+        return o.getSold() - this.getSold();
     }
 }

@@ -21,10 +21,10 @@ public class ElectronicStoreApp extends Application {
     private final ListView<Product>   popView   = storeUI.popular.popular;
 
     private ElectronicStore           store;
+    private ObservableList<Product>   popularProducts;
     private ObservableList<Product>   allProducts;
     private FilteredList<Product>     products;
     private FilteredList<Product>     cartList;
-    private ObservableList<Product>   popularProducts;
 
     private int saleNum;
     private double cartTotal;
@@ -33,13 +33,14 @@ public class ElectronicStoreApp extends Application {
         store           = ElectronicStoreCreator.createStore();
         cartTotal       = 0;
 
-        allProducts     = FXCollections.observableArrayList(product -> new Observable[] {product.anyInCart(), product.anyOnShelf()});
-        popularProducts = FXCollections.observableArrayList(store.getPopularProducts());
+        allProducts     = FXCollections.observableArrayList(product -> new Observable[] {product.getInCartObservable(), product.getOnShelfObservable()});
+        popularProducts = FXCollections.observableArrayList(product -> new Observable[] {product.getSoldObservable()});
         
         allProducts.addAll(store.getProducts());
+        popularProducts.addAll(store.getPopularProducts());
 
-        products        = new FilteredList<>(allProducts, product -> product.anyOnShelf().get());
-        cartList        = new FilteredList<>(allProducts, product -> product.anyInCart().get());
+        products        = new FilteredList<>(allProducts, product -> product.getOnShelfObservable().get() > 0);
+        cartList        = new FilteredList<>(allProducts, product -> product.getInCartObservable().get() > 0);
 
         storeUI.summary.sales.setText(Integer.toString(store.getSales()));
         storeUI.summary.revenue.setText(String.format("%.2f", store.getRevenue()));
@@ -98,9 +99,6 @@ public class ElectronicStoreApp extends Application {
             store.removeFromCart(selectedProd);
 
             storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal -= selectedProd.getPrice()));
-
-            cartView.refresh();
-            stockView.refresh();
         });
 
         /*--------Add to cart button functionality-------*/
@@ -110,9 +108,6 @@ public class ElectronicStoreApp extends Application {
             
             store.addToCart(selectedProd);
             storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal += selectedProd.getPrice()));
-
-            cartView.refresh();
-            stockView.refresh();
         });
         
         /*---------Purchase button functinality---------*/
@@ -120,7 +115,6 @@ public class ElectronicStoreApp extends Application {
             store.sellProduct(cartList.toArray(new Product[cartList.size()]));
 
             popularProducts.setAll(store.getPopularProducts());
-            popView.refresh();
 
             storeUI.cart.purchase.setOn(false);
             storeUI.summary.sales.setText(Integer.toString(store.getSales()));

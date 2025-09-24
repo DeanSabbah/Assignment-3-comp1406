@@ -39,12 +39,10 @@ public class ElectronicStore {
 
     public void addToCart(Product p){
         p.addToCart();
-        p.updateAnys();
     }
 
     public void removeFromCart(Product p){
         p.removeFromCart();
-        p.updateAnys();        
     }
 
     public void sellProduct(Product[] products){
@@ -52,7 +50,6 @@ public class ElectronicStore {
             double transaction =  p.sellUnits(p.getInCart());
             if(transaction == -1) return;
             revenue += transaction;
-            p.updateAnys();
         }
         sales++;
     }
