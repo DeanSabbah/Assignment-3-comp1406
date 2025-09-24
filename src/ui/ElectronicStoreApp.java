@@ -30,22 +30,21 @@ public class ElectronicStoreApp extends Application {
     private int saleNum;
     private double cartTotal;
 
-    private void initialization(){
+    private void initialize(){
         store           = ElectronicStoreCreator.createStore();
         cartTotal       = 0;
 
         allProducts     = FXCollections.observableArrayList(product -> new Observable[] {product.getInCartObservable(), product.getOnShelfObservable()});
         
-        popularProducts = new SortedList<>(allProducts, (product, other) -> product.compareTo(other));
-
         allProducts.addAll(store.getProducts());
 
         products        = new FilteredList<>(allProducts, product -> product.getOnShelfObservable().get() > 0);
         cartList        = new FilteredList<>(allProducts, product -> product.getInCartObservable().get() > 0);
+        popularProducts = new SortedList<>(allProducts, (product, other) -> product.compareTo(other));
 
         storeUI.summary.sales.setText(Integer.toString(store.getSales()));
         storeUI.summary.revenue.setText(String.format("%.2f", store.getRevenue()));
-        storeUI.summary.persale.setText(String.format("%.2f",store.getRevenue()/saleNum));
+        storeUI.summary.persale.setText(String.format("%.2f", store.getRevenue()/saleNum));
         storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal));
 
         stockView.setItems(products);
@@ -55,32 +54,11 @@ public class ElectronicStoreApp extends Application {
         storeUI.display.addCart.setOn(false);
         storeUI.cart.purchase.setOn(false);
         storeUI.cart.remove.setOn(false);
-        
-        cartView.setCellFactory(new Callback<ListView<Product>,ListCell<Product>>() {
-            @Override
-            public ListCell<Product> call(ListView<Product> arg0) {
-                return new CartListCell();
-            }
-        });
-        
-        stockView.setCellFactory(new Callback<ListView<Product>,ListCell<Product>>() {
-            @Override
-            public ListCell<Product> call(ListView<Product> arg0) {
-                return new StockListCell();
-            }
-        });
-
-        popView.setCellFactory(new Callback<ListView<Product>,ListCell<Product>>() {
-            @Override
-            public ListCell<Product> call(ListView<Product> arg0){
-                return new PopularListCell();
-            }
-        });
     }
 
     public void start(Stage primaryStage) {
         /*---------Reset button functionality--------*/
-        storeUI.popular.reset.setOnAction((_) -> initialization());
+        storeUI.popular.reset.setOnAction((_) -> initialize());
 
         /*If item in display is selected, enable add to cart button*/
         stockView.getSelectionModel().selectedItemProperty().addListener((_) -> storeUI.display.addCart.setOn(true));
@@ -131,7 +109,28 @@ public class ElectronicStoreApp extends Application {
             storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal = 0));
         });
 
-    initialization();
+    initialize();
+
+    cartView.setCellFactory(new Callback<ListView<Product>,ListCell<Product>>() {
+        @Override
+        public ListCell<Product> call(ListView<Product> arg0) {
+            return new CartListCell();
+        }
+    });
+    
+    stockView.setCellFactory(new Callback<ListView<Product>,ListCell<Product>>() {
+        @Override
+        public ListCell<Product> call(ListView<Product> arg0) {
+            return new StockListCell();
+        }
+    });
+
+    popView.setCellFactory(new Callback<ListView<Product>,ListCell<Product>>() {
+        @Override
+        public ListCell<Product> call(ListView<Product> arg0){
+            return new PopularListCell();
+        }
+    });
 
     Scene scene = new Scene(storeUI.getScene(), 800, 400);
     

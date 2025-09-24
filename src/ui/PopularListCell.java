@@ -12,7 +12,7 @@ public class PopularListCell extends ListCell<Product> {
             setPrefHeight(0);
         } else {
             setPrefHeight(USE_COMPUTED_SIZE);
-            setText(item.toString());
+            setText(item.getSold() + "x " + item.toString());
         }
     }
 }
