@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.scene.control.ListCell;
@@ -21,7 +22,7 @@ public class ElectronicStoreApp extends Application {
     private final ListView<Product>   popView   = storeUI.popular.popular;
 
     private ElectronicStore           store;
-    private ObservableList<Product>   popularProducts;
+    private SortedList<Product>       popularProducts;
     private ObservableList<Product>   allProducts;
     private FilteredList<Product>     products;
     private FilteredList<Product>     cartList;
@@ -34,10 +35,10 @@ public class ElectronicStoreApp extends Application {
         cartTotal       = 0;
 
         allProducts     = FXCollections.observableArrayList(product -> new Observable[] {product.getInCartObservable(), product.getOnShelfObservable()});
-        popularProducts = FXCollections.observableArrayList(product -> new Observable[] {product.getSoldObservable()});
         
+        popularProducts = new SortedList<>(allProducts, (product, other) -> product.compareTo(other));
+
         allProducts.addAll(store.getProducts());
-        popularProducts.addAll(store.getPopularProducts());
 
         products        = new FilteredList<>(allProducts, product -> product.getOnShelfObservable().get() > 0);
         cartList        = new FilteredList<>(allProducts, product -> product.getInCartObservable().get() > 0);
@@ -66,6 +67,13 @@ public class ElectronicStoreApp extends Application {
             @Override
             public ListCell<Product> call(ListView<Product> arg0) {
                 return new StockListCell();
+            }
+        });
+
+        popView.setCellFactory(new Callback<ListView<Product>,ListCell<Product>>() {
+            @Override
+            public ListCell<Product> call(ListView<Product> arg0){
+                return new PopularListCell();
             }
         });
     }
@@ -114,7 +122,7 @@ public class ElectronicStoreApp extends Application {
         storeUI.cart.purchase.setOnAction((_) -> {
             store.sellProduct(cartList.toArray(new Product[cartList.size()]));
 
-            popularProducts.setAll(store.getPopularProducts());
+            //popularProducts.setAll(store.getPopularProducts());
 
             storeUI.cart.purchase.setOn(false);
             storeUI.summary.sales.setText(Integer.toString(store.getSales()));
