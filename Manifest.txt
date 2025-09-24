@@ -1,2 +1,0 @@
-Manifest-Version: 1.0
-Main-Class:  ElectronicStoreApp$1.class
