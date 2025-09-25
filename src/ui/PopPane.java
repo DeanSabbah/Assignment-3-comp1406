@@ -1,8 +1,12 @@
 package ui;
 
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import model.Product;
 
@@ -21,6 +25,27 @@ public class PopPane extends Pane {
         /*--------popular item list--------*/
         popular.setPrefSize(174, 137);
         popular.relocate(0, 22);
+        popular.setStyle("-overflow-y: hidden;");
+        popular.skinProperty().addListener((_) -> {
+            for (Node node : popular.lookupAll(".scroll-bar")) {
+                if (node instanceof ScrollBar) {
+                    ScrollBar scrollBar = (ScrollBar) node;
+                    if (scrollBar.getOrientation() == Orientation.VERTICAL) {
+                        scrollBar.setDisable(true); 
+                        scrollBar.setVisible(false);
+                        scrollBar.setPrefWidth(0);
+                    }
+                }
+            }
+        });
+
+        popular.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (event.getDeltaY() != 0) {
+                event.consume();
+            }
+        });
+
+        popular.getStylesheets().add(getClass().getResource("../css/hide-scrollbar.css").toExternalForm());
 
         /*------popular item list label----*/
         l_popular.setStyle("-fx-font: 16 ariel");

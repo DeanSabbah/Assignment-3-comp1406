@@ -35,7 +35,7 @@ public class ElectronicStoreApp extends Application {
         cartTotal       = 0;
 
         allProducts     = FXCollections.observableArrayList(product -> new Observable[] {product.getInCartObservable(), product.getOnShelfObservable()});
-        
+
         allProducts.addAll(store.getProducts());
 
         products        = new FilteredList<>(allProducts, product -> product.getOnShelfObservable().get() > 0);
@@ -78,7 +78,7 @@ public class ElectronicStoreApp extends Application {
                 storeUI.display.addCart.setOn(false);
             }
         });
-        
+
         /*--------Remove button functionality--------*/
         storeUI.cart.remove.setOnAction((_) -> {
             Product selectedProd = cartView.getSelectionModel().getSelectedItem();
@@ -91,16 +91,14 @@ public class ElectronicStoreApp extends Application {
         storeUI.display.addCart.setOnAction((_) -> {
             storeUI.cart.purchase.setOn(true);
             Product selectedProd = stockView.getSelectionModel().getSelectedItem();
-            
+
             store.addToCart(selectedProd);
             storeUI.cart.cartTotal.setText(String.format("%.2f", cartTotal += selectedProd.getPrice()));
         });
-        
+      
         /*---------Purchase button functinality---------*/
         storeUI.cart.purchase.setOnAction((_) -> {
             store.sellProduct(cartList.toArray(new Product[cartList.size()]));
-
-            //popularProducts.setAll(store.getPopularProducts());
 
             storeUI.cart.purchase.setOn(false);
             storeUI.summary.sales.setText(Integer.toString(store.getSales()));
@@ -117,7 +115,7 @@ public class ElectronicStoreApp extends Application {
             return new CartListCell();
         }
     });
-    
+
     stockView.setCellFactory(new Callback<ListView<Product>,ListCell<Product>>() {
         @Override
         public ListCell<Product> call(ListView<Product> arg0) {
@@ -133,7 +131,7 @@ public class ElectronicStoreApp extends Application {
     });
 
     Scene scene = new Scene(storeUI.getScene(), 800, 400);
-    
+
     primaryStage.setResizable(false);
     primaryStage.setTitle(store.getName());
     primaryStage.setScene(scene);

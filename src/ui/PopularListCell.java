@@ -9,9 +9,7 @@ public class PopularListCell extends ListCell<Product> {
         super.updateItem(item, empty);
         if (empty || getIndex() >= 3 || item == null) {
             setText("");
-            setPrefHeight(0);
         } else {
-            setPrefHeight(USE_COMPUTED_SIZE);
             setText(item.getSold() + "x " + item.toString());
         }
     }
