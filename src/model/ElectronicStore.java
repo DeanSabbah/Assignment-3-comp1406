@@ -8,8 +8,6 @@ public class ElectronicStore {
     String name;
     private final int MAX_PRODUCTS        = 10;
     private List<Product> products        = new ArrayList<>(MAX_PRODUCTS);
-    private List<Product> soldProducts    = new ArrayList<>(MAX_PRODUCTS);    
-    private List<Product> popularProducts = new ArrayList<>(3);
     
     private int sales      = 0;
     private double revenue = 0;
@@ -26,12 +24,8 @@ public class ElectronicStore {
     void addProduct(Product p){
         if (products.size() < MAX_PRODUCTS){
             products.add(p);
-            soldProducts.add(p);
             for (Product product : products) {
                 product.setOnShelf(product.getStock());
-            }
-            if(popularProducts.size() < 3){
-                popularProducts.add(p);
             }
         }
     }
