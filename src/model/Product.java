@@ -6,18 +6,18 @@ import javafx.beans.property.SimpleIntegerProperty;
 public abstract class Product implements Comparable<Product> {
     protected double price;
     protected int    stock;
+    private   int    sold;
 
     private SimpleIntegerProperty onShelf;
     private SimpleIntegerProperty inCart;
-    private SimpleIntegerProperty sold;
 
-    public Product(double price, int stock, int sold){
+    public Product(double price, int stock){
         this.price      = price;
         this.stock      = stock;
+        this.sold       = 0;
 
         this.inCart     = new SimpleIntegerProperty(0);
         this.onShelf    = new SimpleIntegerProperty(stock);
-        this.sold       = new SimpleIntegerProperty(0);
     }
 
     public void addToCart() throws IndexOutOfBoundsException{
@@ -61,10 +61,6 @@ public abstract class Product implements Comparable<Product> {
     }
     
     public int getSold(){
-        return sold.get();
-    }
-
-    public SimpleIntegerProperty getSoldObservable(){
         return sold;
     }
 
@@ -79,7 +75,7 @@ public abstract class Product implements Comparable<Product> {
     public double sellUnits(int amount){
         if (amount <= stock && amount > 0){
             stock -= amount;
-            sold.set(sold.get() + amount);
+            sold += amount;
             inCart.set(0);
             return price*amount;
         }

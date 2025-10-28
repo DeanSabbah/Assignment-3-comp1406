@@ -6,7 +6,7 @@ public abstract class Appliance extends Product {
     protected String brand;
 
     public Appliance(double price, int stock, int wattage, String colour, String brand){
-        super(price, stock, 0);
+        super(price, stock);
         this.wattage = wattage;
         this.colour = colour;
         this.brand = brand;

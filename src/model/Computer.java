@@ -7,7 +7,7 @@ public abstract class Computer extends Product {
     protected int       storage;
 
     public Computer(double price, int stock, double cpu, int ram, boolean drive, int storage){
-        super(price, stock, 0);
+        super(price, stock);
         this.cpu = cpu;
         this.ram = ram;
         this.drive = drive;
