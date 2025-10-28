@@ -1,6 +1,6 @@
 package model;
 
-public class Desktop extends Computers {
+public class Desktop extends Computer {
 
     private String  form;
 

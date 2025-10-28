@@ -1,6 +1,6 @@
 package model;
 
-public class ToasterOven extends Appliances {
+public class ToasterOven extends Appliance {
     private int     width;
     private boolean convection;
 

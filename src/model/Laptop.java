@@ -1,6 +1,6 @@
 package model;
 
-public class Laptop extends Computers {
+public class Laptop extends Computer {
     private double  screen;
 
     public Laptop(double price, int stock, double cpu, int ram, boolean drive, int storage, double screen){

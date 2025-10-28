@@ -1,6 +1,6 @@
 package model;
 
-public class Fridge extends Appliances {
+public class Fridge extends Appliance {
     private double  size;
     private boolean freezer;
 
