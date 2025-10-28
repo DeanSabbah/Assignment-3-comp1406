@@ -10,11 +10,6 @@ public class Desktop extends Computers {
     }
 
     public String toString(){
-        if (drive){
-            return form + " Desktop PC with " + cpu + "GHz CPU, " + ram + "GB RAM, " + storage + "GB SSD drive. \n(" + String.format("%,.2f", price) + "$ each)";
-        }
-        else{
-            return form + " Desktop PC with " + cpu + "GHz CPU, " + ram + "GB RAM, " + storage + "GB HDD drive. \n(" + String.format("%,.2f", price) + "$ each)";
-        }
+        return String.format("%s Desktop PC with %.2f GHz CPU, %d GB RAM, %d GB %s drive.\n(%.2f$ each)", form, cpu, ram, storage, drive ? "SSD" : "HDD", price);
     }
 }

@@ -11,11 +11,6 @@ public class ToasterOven extends Appliances {
     }
 
     public String toString(){
-        if (convection){
-            return width + " inch " + brand + " Toaster with convection (" + colour + ", " + wattage + " watts) \n(" + String.format("%,.2f", price) + "$ each)";
-        }
-        else{
-            return width + " inch " + brand + " Toaster (" + colour + ", " + wattage + " watts) \n(" + String.format("%,.2f", price) + "$ each)";
-        }
+        return String.format("%d inch %s Toaster%s (%s, %d watts)\n(%.2f$ each)", width, brand, convection ? " with convection" : "", colour, wattage, price);
     }    
 }

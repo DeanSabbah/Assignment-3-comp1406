@@ -15,25 +15,25 @@ public class CartPane extends Pane {
 
     public CartPane(){
 
-        /*------------Cart label-----------*/
+        /*-------------Cart label--------------*/
         lCart.setStyle("-fx-font: 16 ariel");
         lCart.relocate(95, -5);
 
-        /*-----------cartTotal label-----------*/
+        /*----------cartTotal label------------*/
         cartTotal.setStyle("-fx-font: 16 ariel");
         cartTotal.relocate(130, -5);
 
-        /*-----------Cart list-------------*/
+        /*-------------Cart list---------------*/
         cart.relocate(0, 18);
         cart.setPrefSize(274, 274);
 
-        /*----------Remove button----------*/
+        /*------------Remove button------------*/
         remove.setStyle("-fx-font: 14 ariel");
         remove.relocate(143, 304);
         remove.setPrefSize(120, 46);
         remove.setOn(false);
 
-        /*--------Purchese button----------*/
+        /*-----------Purchase button-----------*/
         purchase.setStyle("-fx-font: 14 ariel");
         purchase.relocate(17, 304);
         purchase.setPrefSize(120, 46);

@@ -11,11 +11,6 @@ public class Fridge extends Appliances {
     }
 
     public String toString(){
-        if (freezer){
-            return size + "cu. ft. " + brand + " Fridge with freezer (" + colour + ", " + wattage + " watts) \n(" + String.format("%,.2f", price) + "$ each)";
-        }
-        else{
-            return size + "cu. ft. " + brand + " Fridge (" + colour + ", " + wattage + " watts) \n(" + String.format("%,.2f", price) + "$ each)";
-        }
+        return String.format("%.1f cu. ft. %s Fridge%s (%s, %d watts)\n(%.2f$ each)", size, brand, freezer ? " with freezer" : "", colour, wattage, price);
     }
 }

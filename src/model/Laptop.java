@@ -9,11 +9,6 @@ public class Laptop extends Computers {
     }
     
     public String toString(){
-        if (drive){
-            return screen + " inch Laptop PC with " + cpu + "GHz CPU, " + ram + "GB RAM, " + storage + "GB SSD drive.\n (" + String.format("%,.2f", price) + "$ each)";
-        }
-        else{
-            return screen + " inch Laptop PC with " + cpu + "GHz CPU, " + ram + "GB RAM, " + storage + "GB HDD drive.\n (" + String.format("%,.2f", price) + "$ each)";
-        }
+        return String.format("%.1f inch Laptop PC with %.2f GHz CPU, %d GB RAM, %d GB %s drive.\n(%.2f$ each)", screen, cpu, ram, storage, drive ? "SSD" : "HDD", price);
     }
 }
